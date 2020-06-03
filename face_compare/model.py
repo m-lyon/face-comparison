@@ -1,6 +1,9 @@
+import cv2
 import numpy as np
 import tensorflow as tf
 import keras.backend.tensorflow_backend as tfback
+
+from pathlib import Path
 
 from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
 from keras.models import Model
@@ -8,22 +11,21 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from keras.layers.core import Lambda, Flatten, Dense
 
-# from weights import load_weights
-
-import cv2
-
-
 def _get_available_gpus():
     """Get a list of available gpu devices (formatted as strings).
 
     # Returns
         A list of available GPU devices.
     """
-    #global _LOCAL_DEVICES
     if tfback._LOCAL_DEVICES is None:
         devices = tf.config.list_logical_devices()
         tfback._LOCAL_DEVICES = [x.name for x in devices]
     return [x for x in tfback._LOCAL_DEVICES if 'device:gpu' in x.lower()]
+
+
+tfback._get_available_gpus = _get_available_gpus
+tfback._get_available_gpus()
+tfback.set_image_data_format('channels_first')
 
 
 def conv2d_bn(x, layer_name, filters, kernel_size=(1, 1), strides=(1, 1), i='', epsilon=0.00001):
@@ -248,26 +250,35 @@ def facenet_model(input_shape):
 
     # Create model instance
     model = Model(inputs = X_input, outputs = X, name='FaceNetModel')
+
+    weight_fpath = Path(__file__).parent.joinpath('weights', 'facenet_weights.h5')
+    model.load_weights(weight_fpath)
         
     return model
 
-if __name__ == '__main__':
-    img = cv2.imread('/Users/matt/Dev/git/facenet-test/facenet-face-recognition/images/mutty.jpg')
-    image = cv2.resize(img, (96, 96))
-    img = image[...,::-1]
-    img = np.around(np.transpose(img, (2,0,1))/255.0, decimals=12)
-    x_train = np.array([img])
-
-    tfback._get_available_gpus = _get_available_gpus
-    tfback._get_available_gpus()
-    tfback.set_image_data_format('channels_first')
-
-    model = facenet_model(input_shape=(3, 96, 96))
-
-    weight_fpath = '/Users/matt/Dev/git/face-comparison/face-compare/facenet_weights.h5'
-    model.load_weights(weight_fpath)
-
+def img_to_encoding(image, model):
+    # Resize for model
+    resized = cv2.resize(image, (96, 96))
+    # Swap channel dimensions
+    input_img = resized[...,::-1]
+    # Switch to channels first and round to specific precision.
+    input_img = np.around(np.transpose(input_img, (2,0,1))/255.0, decimals=12)
+    x_train = np.array([input_img])
     embedding = model.predict_on_batch(x_train)
-    print(embedding)
+    return embedding
+
+# if __name__ == '__main__':
+#     image_path = '/Users/matt/Dev/git/face-comparison/face-compare/data/example.jpg'
+#     img = cv2.imread(image_path, 1)
+
+#     cropped = get_face(img)
+
+#     model = facenet_model(input_shape=(3, 96, 96))
+
+#     weight_fpath = '/Users/matt/Dev/git/face-comparison/face-compare/facenet_weights.h5'
+#     model.load_weights(weight_fpath)
+
+#     embedding_one = img_to_encoding(cropped, model)
+#     print(embedding)
 
     
