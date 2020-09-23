@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-import keras.backend.tensorflow_backend as tfback
+import tensorflow.keras.backend as tfback
 
 from pathlib import Path
 
@@ -11,20 +11,6 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from keras.layers.core import Lambda, Flatten, Dense
 
-def _get_available_gpus():
-    """Get a list of available gpu devices (formatted as strings).
-
-    # Returns
-        A list of available GPU devices.
-    """
-    if tfback._LOCAL_DEVICES is None:
-        devices = tf.config.list_logical_devices()
-        tfback._LOCAL_DEVICES = [x.name for x in devices]
-    return [x for x in tfback._LOCAL_DEVICES if 'device:gpu' in x.lower()]
-
-
-tfback._get_available_gpus = _get_available_gpus
-tfback._get_available_gpus()
 tfback.set_image_data_format('channels_first')
 
 

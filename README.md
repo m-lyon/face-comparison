@@ -24,6 +24,17 @@ compare_faces.py --input-one /path/to/image_one.png --input-two /path/to/image_t
 4. Finally the second embedding is subtracted from the first, and the Euclidean norm of that vector is calculated.
 5. A threshold of 0.7 is used to determine whether they are the same person or not.
 
+## Known Issues
+
+#### CPU Only runtime issue
+If you are trying to run the module without a suitable GPU, you may run into the following error message:
+```
+tensorflow.python.framework.errors_impl.InvalidArgumentError:  Default MaxPoolingOp only supports NHWC on device type CPU
+```
+To fix this issue with Intel CPU architecture, you can install the TensorFlow Intel Optimization package via
+```
+pip install intel-tensorflow
+```
 
 ## References
 This module uses the AI model FaceNet, which can be found [here](https://github.com/davidsandberg/facenet), and the journal article [here](https://arxiv.org/abs/1503.03832).
