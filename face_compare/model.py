@@ -252,19 +252,4 @@ def img_to_encoding(image, model):
     x_train = np.array([input_img])
     embedding = model.predict_on_batch(x_train)
     return embedding
-
-# if __name__ == '__main__':
-#     image_path = '/Users/matt/Dev/git/face-comparison/face-compare/data/example.jpg'
-#     img = cv2.imread(image_path, 1)
-
-#     cropped = get_face(img)
-
-#     model = facenet_model(input_shape=(3, 96, 96))
-
-#     weight_fpath = '/Users/matt/Dev/git/face-comparison/face-compare/facenet_weights.h5'
-#     model.load_weights(weight_fpath)
-
-#     embedding_one = img_to_encoding(cropped, model)
-#     print(embedding)
-
-    
+   
