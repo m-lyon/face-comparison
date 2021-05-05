@@ -9,12 +9,12 @@ pip install face-compare
 ## Usage
 Use `compare_faces.py` to compare two images of people to see if they are the same person.
 ```bash
-compare_faces.py --input-one /path/to/image_one.png --input-two /path/to/image_two.png
+compare_faces.py --image-one /path/to/image_one.png --image-two /path/to/image_two.png
 ```
 
 Optionally output the cropped image output to a directory (useful for inspecting input to AI model)
 ```bash
-compare_faces.py --input-one /path/to/image_one.png --input-two /path/to/image_two.png -s /path/to/outputs/
+compare_faces.py --image-one /path/to/image_one.png --image-two /path/to/image_two.png -s /path/to/outputs/
 ```
 
 ## Steps Involved
