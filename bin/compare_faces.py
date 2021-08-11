@@ -7,6 +7,9 @@ from pathlib import Path
 from face_compare.images import get_face
 from face_compare.model import facenet_model, img_to_encoding
 
+# load model
+model = facenet_model(input_shape=(3, 96, 96))
+
 def run(image_one, image_two, save_dest=None):
     # Load images
     face_one = get_face(cv2.imread(str(image_one), 1))
@@ -17,9 +20,6 @@ def run(image_one, image_two, save_dest=None):
         print(f'Saving cropped images in {save_dest}.')
         cv2.imwrite(str(save_dest.joinpath('face_one.png')), face_one)
         cv2.imwrite(str(save_dest.joinpath('face_two.png')), face_two)
-
-    # load model
-    model = facenet_model(input_shape=(3, 96, 96))
 
     # Calculate embedding vectors
     embedding_one = img_to_encoding(face_one, model)
