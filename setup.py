@@ -3,7 +3,7 @@
 from os import path
 from setuptools import setup, find_packages
 
-version = '1.0.2'
+version = '1.1.0'
 this_dir = path.abspath(path.dirname(__file__))
 with open(path.join(this_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -22,10 +22,9 @@ setup(
     license='MIT License',
     packages=find_packages(),
     install_requires=[
-        'numpy==1.18.0',
-        'tensorflow==2.3.1',
-        'keras==2.4.2',
-        'scipy==1.4.1',
+        'numpy',
+        'tensorflow==2.5.0',
+        'scipy',
         'opencv-python'
     ],
     classifiers=[

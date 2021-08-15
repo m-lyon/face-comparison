@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
-import tensorflow as tf
+
 import tensorflow.keras.backend as tfback
 
 from pathlib import Path
 
-from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
-from keras.models import Model
+from tensorflow.keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import BatchNormalization
-from keras.layers.pooling import MaxPooling2D, AveragePooling2D
-from keras.layers.core import Lambda, Flatten, Dense
+from tensorflow.keras.layers import MaxPooling2D, AveragePooling2D
+from tensorflow.keras.layers import Lambda, Flatten, Dense
 
 tfback.set_image_data_format('channels_first')
 

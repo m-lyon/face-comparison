@@ -2,7 +2,7 @@ import cv2
 
 def get_face(img):
     '''Crops image to only include face plus a border'''
-    height, width, channels = img.shape
+    height, width, _ = img.shape
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
     face_box = face_cascade.detectMultiScale(img)
     # Get dimensions of bounding box
