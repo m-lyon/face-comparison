@@ -7,7 +7,7 @@ from pathlib import Path
 
 from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
 from keras.models import Model
-from keras.layers.normalization import BatchNormalization
+from tensorflow.keras.layers import BatchNormalization
 from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from keras.layers.core import Lambda, Flatten, Dense
 
@@ -252,4 +252,3 @@ def img_to_encoding(image, model):
     x_train = np.array([input_img])
     embedding = model.predict_on_batch(x_train)
     return embedding
-   
