@@ -23,7 +23,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy',
-        'tensorflow==2.5.0',
+        'tensorflow==2.5.1',
         'scipy',
         'opencv-python'
     ],
