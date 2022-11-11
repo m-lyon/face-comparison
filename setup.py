@@ -3,7 +3,7 @@
 from os import path
 from setuptools import setup, find_packages
 
-version = '1.1.2'
+version = '1.1.3'
 this_dir = path.abspath(path.dirname(__file__))
 with open(path.join(this_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
