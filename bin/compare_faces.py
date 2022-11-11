@@ -12,8 +12,14 @@ model = facenet_model(input_shape=(3, 96, 96))
 
 def run(image_one, image_two, save_dest=None):
     # Load images
-    face_one = get_face(cv2.imread(str(image_one), 1))
-    face_two = get_face(cv2.imread(str(image_two), 1))
+    try:
+        image_index = 1
+        face_one = get_face(cv2.imread(str(image_one), 1))
+        image_index = 2
+        face_two = get_face(cv2.imread(str(image_two), 1))
+    except IndexError:
+        print(f"ERROR: no face detected in image {image_index}")
+        return
 
     # Optionally save cropped images
     if save_dest is not None:
