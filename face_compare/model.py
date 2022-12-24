@@ -1,15 +1,17 @@
-import cv2
-import numpy as np
-
-import tensorflow.keras.backend as tfback
+'''Module containing model implementation'''
 
 from pathlib import Path
 
-from tensorflow.keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.layers import MaxPooling2D, AveragePooling2D
-from tensorflow.keras.layers import Lambda, Flatten, Dense
+import cv2
+import numpy as np
+
+from keras import backend as tfback
+
+from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
+from keras.models import Model
+from keras.layers import BatchNormalization
+from keras.layers import MaxPooling2D, AveragePooling2D
+from keras.layers import Lambda, Flatten, Dense
 
 tfback.set_image_data_format('channels_first')
 
@@ -35,10 +37,13 @@ def conv2d_bn(x, layer_name, filters, kernel_size=(1, 1), strides=(1, 1), i='', 
     else:
         conv_name = f'conv{i}'
         bn_name = f'bn{i}'
-    tensor = Conv2D(filters, kernel_size, strides=strides, data_format='channels_first', name=conv_name)(x)
+    tensor = Conv2D(
+        filters, kernel_size, strides=strides, data_format='channels_first', name=conv_name
+    )(x)
     tensor = BatchNormalization(axis=1, epsilon=epsilon, name=bn_name)(tensor)
     tensor = Activation('relu')(tensor)
     return tensor
+
 
 def inception_block_4a(X):
     # 3x3 Block
@@ -122,7 +127,7 @@ def inception_block_5a(X):
     X_1x1 = conv2d_bn(X, 'inception_5a_1x1', 256)
 
     return concatenate([X_3x3, X_5x5, X_pool, X_1x1], axis=1)
-    
+
 
 def inception_block_5b(X):
     # 3x3 Block
@@ -176,79 +181,80 @@ def inception_block_6b(X):
     return concatenate([X_3x3, X_pool, X_1x1], axis=1)
 
 
-
 def facenet_model(input_shape):
     '''Implementation of the Inception model used for FaceNet.
-    
+
     Arguments:
     input_shape (Tuple[int]): Shape of the images of the dataset.
 
     Returns:
     model (keras.models.Model): FaceNet model.
     '''
-        
+
     # Define the input as a tensor with shape input_shape
     X_input = Input(input_shape)
 
     # Zero-Padding
     X = ZeroPadding2D((3, 3))(X_input)
-    
+
     # First Block
     X = conv2d_bn(X, '', 64, kernel_size=(7, 7), strides=(2, 2), i='1', epsilon=0.001)
-    
+
     # Zero-Padding + MAXPOOL
     X = ZeroPadding2D((1, 1))(X)
-    X = MaxPooling2D((3, 3), strides = 2)(X)
-    
+    X = MaxPooling2D((3, 3), strides=2)(X)
+
     # Second Block
     X = conv2d_bn(X, '', 64, i='2')
-    
+
     # Zero-Padding + MAXPOOL
     X = ZeroPadding2D((1, 1))(X)
 
     # Third Block
     X = conv2d_bn(X, '', 192, kernel_size=(3, 3), i='3')
-    
+
     # Zero-Padding + MAXPOOL
     X = ZeroPadding2D((1, 1))(X)
-    X = MaxPooling2D(pool_size = 3, strides = 2)(X)
-    
+    X = MaxPooling2D(pool_size=3, strides=2)(X)
+
     # Fourth Block (Inception)
     X = inception_block_4a(X)
     X = inception_block_4b(X)
     X = inception_block_4c(X)
-    
+
     # Fifth Block (Inception)
     X = inception_block_5a(X)
     X = inception_block_5b(X)
-    
+
     # Sixth Block (Inception)
     X = inception_block_6a(X)
     X = inception_block_6b(X)
-    
+
     # Top layer
     X = AveragePooling2D(pool_size=(3, 3), strides=(1, 1), data_format='channels_first')(X)
     X = Flatten()(X)
     X = Dense(128, name='dense')(X)
-    
+
     # L2 normalization
-    X = Lambda(lambda  x: tfback.l2_normalize(x,axis=1))(X)
+    X = Lambda(lambda x: tfback.l2_normalize(x, axis=1))(X)
 
     # Create model instance
-    model = Model(inputs = X_input, outputs = X, name='FaceNetModel')
+    model = Model(inputs=X_input, outputs=X, name='FaceNetModel')
 
     weight_fpath = Path(__file__).parent.joinpath('weights', 'facenet_weights.h5')
     model.load_weights(weight_fpath)
-        
+
     return model
 
+
 def img_to_encoding(image, model):
+    '''Calculates encoding from the image data'''
     # Resize for model
     resized = cv2.resize(image, (96, 96))
     # Swap channel dimensions
-    input_img = resized[...,::-1]
+    input_img = resized[..., ::-1]
     # Switch to channels first and round to specific precision.
-    input_img = np.around(np.transpose(input_img, (2,0,1))/255.0, decimals=12)
+    input_img = np.around(np.divide(np.transpose(input_img, (2, 0, 1)), 255.0), decimals=12)
     x_train = np.array([input_img])
     embedding = model.predict_on_batch(x_train)
     return embedding

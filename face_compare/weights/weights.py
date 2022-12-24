@@ -72,7 +72,7 @@ SHAPES = {
 
 def load_weights(model):
     '''Loads weights to given FaceNet model
-    
+
     Args:
         model (keras.models.Models): FaceNet model.
     '''
@@ -87,7 +87,7 @@ def load_weights(model):
             model.get_layer(layer_name).set_weights(get_batch_norm_weights(weights_dir, layer_name))
         elif 'dense' in layer_name:
             model.get_layer(layer_name).set_weights(get_dense_weights(weights_dir, layer_name))
-    
+
 
 def get_conv_weights(weights_dir, layer_name):
     '''Loads convolutional layer's weights and biases
