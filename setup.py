@@ -21,7 +21,7 @@ setup(
     python_requires='>=3.7',
     license='MIT License',
     packages=find_packages(),
-    install_requires=['numpy', 'tensorflow==2.9.3', 'scipy', 'opencv-python'],
+    install_requires=['numpy', 'tensorflow==2.11.1', 'scipy', 'opencv-python'],
     classifiers=[
         'Programming Language :: Python',
         'Operating System :: Unix',
